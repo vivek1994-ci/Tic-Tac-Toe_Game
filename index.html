@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body{
+    background-image: linear-gradient(rgb(180, 232, 255), rgb(236, 187, 243));
+    min-height: 100%;
+  }
+  h2{
+    color: blue;
+    font-size: 30px;
+    font-weight: 700;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+  }
+  #tic-tac-toe-board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 200px;
+    height: 190px;
+    margin: 3rem 0rem 0rem 35rem;
+    background-image: linear-gradient(rgb(255, 189, 118), rgb(222, 228, 136));
+    
+  }
+  .cell {
+    width: 60px;
+    height: 60px;
+    border-width: 3px;
+    border-style: solid;
+    border-image: linear-gradient(to right, darkblue, darkorchid) 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  }
+  #game-status{
+    padding: 2rem 0rem 0rem 36rem;
+    font-size: 25px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(255, 255, 255);
+    font-weight: 700;
+  }
+  #btn1{
+    background-image: linear-gradient(rgb(159, 118, 255), rgb(214, 136, 228));
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    margin: 2rem 0rem 0rem 36rem;
+    padding: 10px;
+  }
+  #btn1:hover{
+    cursor: pointer;
+    scale: 1.1;
+  }
+  
+</style>
+</head>
+<body>
+<h2>Tic-Tac-Toe Game</h2>
+<div id="tic-tac-toe-board"></div>
+<p id="game-status"></p>
+
+<script>
+  const board = document.getElementById("tic-tac-toe-board");
+  const status = document.getElementById("game-status");
+  let currentPlayer = "X";
+  let gameActive = true;
+  let gameState = ["", "", "", "", "", "", "", "", ""];
+
+  const winningConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  function handleCellClick(clickedCellEvent) {
+    const clickedCell = clickedCellEvent.target;
+    const clickedCellIndex = parseInt(clickedCell.getAttribute("data-cell-index"));
+
+    if (gameState[clickedCellIndex] !== "" || !gameActive) {
+      return;
+    }
+
+    handleCellPlayed(clickedCell, clickedCellIndex);
+    handleResultValidation();
+  }
+
+  function handleCellPlayed(clickedCell, clickedCellIndex) {
+    gameState[clickedCellIndex] = currentPlayer;
+    clickedCell.innerHTML = currentPlayer;
+  }
+
+  function handleResultValidation() {
+    let roundWon = false;
+    for (let i = 0; i < winningConditions.length; i++) {
+      const condition = winningConditions[i];
+      let a = gameState[condition[0]];
+      let b = gameState[condition[1]];
+      let c = gameState[condition[2]];
+      if (a === "" || b === "" || c === "") {
+        continue;
+      }
+      if (a === b && b === c) {
+        roundWon = true;
+        break;
+      }
+    }
+
+    if (roundWon) {
+      status.innerHTML = `Player ${currentPlayer} has won!`;
+      gameActive = false;
+      return;
+    }
+
+    let roundDraw = !gameState.includes("");
+    if (roundDraw) {
+      status.innerHTML = "Game is a draw!";
+      gameActive = false;
+      return;
+    }
+
+    handlePlayerChange();
+  }
+
+  function handlePlayerChange() {
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    status.innerHTML = `Player ${currentPlayer}'s turn`;
+  }
+
+  function handleRestartGame() {
+    gameState = ["", "", "", "", "", "", "", "", ""];
+    gameActive = true;
+    currentPlayer = "X";
+    status.innerHTML = `Player ${currentPlayer}'s turn`;
+    document.querySelectorAll(".cell").forEach((cell) => (cell.innerHTML = ""));
+  }
+
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.setAttribute("data-cell-index", i);
+    cell.addEventListener("click", handleCellClick);
+    board.appendChild(cell);
+  }
+
+  status.innerHTML = `Player ${currentPlayer}'s turn`;
+
+</script>
+<button id="btn1" onclick="handleRestartGame()">Restart Game</button>
+
+</body>
+</html>
+<br><br>
+<center>Created by Vivek Rajpurohit</center>
